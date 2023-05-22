@@ -1,12 +1,10 @@
+import Form, { FormData } from "@/components/Form";
+import styles from "@/styles/Home.module.css";
 import axios from "axios";
-import { FormEvent, useState } from "react";
 
 export default function Home() {
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-
-  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleFormSubmit = async (formData: FormData) => {
+    const { title, message } = formData;
 
     try {
       const response = await axios.post("/api/send-notification", {
@@ -20,28 +18,11 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <h1>Send Notification</h1>
-      <form onSubmit={handleFormSubmit}>
-        <label>
-          Title:
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          Message:
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-        </label>
-        <br />
-        <button type="submit">Send Notification</button>
-      </form>
+    <div className={styles.cardFormContainer}>
+      <div className={styles.titleWrapper}>
+        <h1 className={styles.title}>Iglesia Ever App</h1>
+      </div>
+      <Form onSubmit={handleFormSubmit} />
     </div>
   );
 }
