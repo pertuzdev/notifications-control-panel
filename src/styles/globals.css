@@ -1,5 +1,5 @@
 body {
-  background: #ddeefc;
+  background: #f4faff;
   font-family: "Source Sans Pro", sans-serif;
   font-size: 16px;
 }
@@ -11,7 +11,46 @@ body {
 }
 .wrapper {
   min-height: 100vh;
-  display: flex;
+}
+
+a {
+  cursor: pointer;
+  color: #2962ff;
+  font-weight: 600;
+}
+
+.navLink {
+  font-size: 1.2rem;
+  padding: 15px 25px;
+  position: relative;
+  display: block;
+  text-decoration: none;
+}
+
+.navLinkWrapper a:after {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 0.5px;
+  background: #3368f9;
+  content: "";
+  opacity: 0;
+  -webkit-transition: height 0.3s, opacity 0.3s, -webkit-transform 0.3s;
+  -moz-transition: height 0.3s, opacity 0.3s, -moz-transform 0.3s;
+  transition: height 0.3s, opacity 0.3s, transform 0.3s;
+  -webkit-transform: translateY(-10px);
+  -moz-transform: translateY(-10px);
+  transform: translateY(-10px);
+}
+
+.navLinkWrapper a:hover:after,
+.navLinkWrapper a:focus:after {
+  height: 5px;
+  opacity: 1;
+  -webkit-transform: translateY(0px);
+  -moz-transform: translateY(0px);
+  transform: translateY(0px);
 }
 
 @media screen and (max-width: 700px), (max-height: 500px) {

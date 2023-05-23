@@ -62,19 +62,60 @@
   min-height: 80px;
 }
 
-.cardButton {
+.textButton {
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.textButton span {
+  font-size: 1.1rem;
+  color: #2962ff;
+  font-weight: 600;
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.buttonsWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.cardSubmitButton {
   width: 100%;
   height: 55px;
-  background: #2364d2;
+  background: #2962ff;
   border: none;
   border-radius: 10px;
-  font-size: 22px;
+  font-size: 1.3rem;
   font-weight: 500;
   font-family: "Source Sans Pro", sans-serif;
   box-shadow: 3px 10px 20px 0px rgba(35, 100, 210, 0.3);
   color: #fff;
-  margin-top: 20px;
   cursor: pointer;
+}
+
+.cardSecondaryButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 300px;
+  height: 55px;
+  padding: 10px;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.cardSecondaryButton span {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2962ff;
 }
 
 .uploadLabel {

@@ -82,9 +82,17 @@ const Form = ({ onSubmit }: FormProps) => {
           <span className={styles.uploadText}>Upload Image</span>
         </label>
       </div>
-      <button type="submit" className={styles.cardButton}>
-        Send
+      <button type="button" className={styles.textButton}>
+        <span>Save as draft</span>
       </button>
+      <div className={styles.buttonsWrapper}>
+        <button type="button" className={styles.cardSecondaryButton}>
+          <span>Save</span>
+        </button>
+        <button type="submit" className={styles.cardSubmitButton}>
+          Send
+        </button>
+      </div>
     </form>
   );
 };
