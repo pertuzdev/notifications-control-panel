@@ -1,5 +1,7 @@
 import { useState } from "react";
 import styles from "./styles.module.css";
+import { addDoc, collection } from "@firebase/firestore";
+import { db } from "@/firebase/client";
 
 interface FormProps {
   onSubmit: (formData: FormData) => void;
@@ -7,14 +9,14 @@ interface FormProps {
 
 export interface FormData {
   title: string;
-  message: string;
+  description: string;
   image: File | null;
 }
 
 const Form = ({ onSubmit }: FormProps) => {
   const [formData, setFormData] = useState<FormData>({
     title: "",
-    message: "",
+    description: "",
     image: null,
   });
 
@@ -34,6 +36,17 @@ const Form = ({ onSubmit }: FormProps) => {
       ...prevData,
       image: file,
     }));
+  };
+
+  const handleSaveNotification = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "notifications"), {
+        ...formData,
+      });
+      console.log("Document written with ID:", docRef.id);
+    } catch (e) {
+      console.log("Error adding document:", e);
+    }
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -60,9 +73,9 @@ const Form = ({ onSubmit }: FormProps) => {
       </div>
       <div className={styles.formGroup}>
         <textarea
-          id="message"
-          name="message"
-          value={formData.message}
+          id="description"
+          name="description"
+          value={formData.description}
           onChange={handleChange}
           required
           className={styles.textarea}
@@ -82,7 +95,11 @@ const Form = ({ onSubmit }: FormProps) => {
           <span className={styles.uploadText}>Upload Image</span>
         </label>
       </div>
-      <button type="button" className={styles.textButton}>
+      <button
+        type="button"
+        className={styles.textButton}
+        onClick={handleSaveNotification}
+      >
         <span>Save as draft</span>
       </button>
       <div className={styles.buttonsWrapper}>

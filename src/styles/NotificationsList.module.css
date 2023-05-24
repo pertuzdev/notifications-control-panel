@@ -1,16 +1,18 @@
-.tableWrapper {
+.container {
   display: flex;
   flex-direction: column;
-  width: 100%;
   justify-content: center;
   align-items: center;
+}
+.wrapper {
+  width: 90%;
 }
 
 .content-table {
   border-collapse: collapse;
   margin: 25px 0;
   font-size: 0.9em;
-  min-width: 90%;
+  width: 100%;
   border-radius: 5px 5px 0 0;
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
@@ -58,4 +60,23 @@
   justify-content: center;
   align-items: center;
   padding-bottom: 2rem;
+}
+
+.createButtonWrapper {
+  display: flex;
+  width: 100%;
+}
+
+.button {
+  padding: 0 1.5rem;
+  height: 50px;
+  background: #2962ff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  font-family: "Source Sans Pro", sans-serif;
+  box-shadow: 3px 10px 20px 0px rgba(35, 100, 210, 0.3);
+  color: #fff;
+  cursor: pointer;
 }

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Home() {
   const handleFormSubmit = async (formData: FormData) => {
-    const { title, message } = formData;
+    const { title, description: message } = formData;
 
     try {
       const response = await axios.post("/api/send-notification", {
