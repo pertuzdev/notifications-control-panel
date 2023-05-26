@@ -1,4 +1,4 @@
-export type IconType = "edit" | "delete";
+export type IconType = "edit" | "delete" | "exit" | "send";
 
 export type CustomIconProps =
   | {

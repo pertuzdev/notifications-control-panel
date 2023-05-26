@@ -1,13 +1,25 @@
+import Form, { FormData } from "@/components/Form";
 import Icon from "@/components/Icons";
+import AppModal from "@/components/Modal";
 import { db } from "@/firebase/client";
 import { INotifications } from "@/interfaces/Notifications";
 import styles from "@/styles/NotificationsList.module.css";
 import { collection, getDocs } from "@firebase/firestore";
+import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function NotificationsList() {
   const [notifications, setNotifications] = useState<INotifications[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
 
   const fetchNotifications = async () => {
     await getDocs(collection(db, "notifications")).then((querySnapshot) => {
@@ -18,6 +30,20 @@ export default function NotificationsList() {
       setNotifications(newData as INotifications[]);
       console.log(notifications, newData);
     });
+  };
+
+  const handleFormSubmit = async (formData: FormData) => {
+    const { title, description } = formData;
+
+    try {
+      const response = await axios.post("/api/send-notification", {
+        title,
+        description,
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -36,7 +62,9 @@ export default function NotificationsList() {
           </span>
         </div>
         <div className={styles.createButtonWrapper}>
-          <button className={styles.button}>Create Notification</button>
+          <button className={styles.button} onClick={openModal}>
+            Create Notification
+          </button>
         </div>
         <table className={styles["content-table"]}>
           <thead>
@@ -56,9 +84,21 @@ export default function NotificationsList() {
                 <td>{notification.description}</td>
                 <td>{notification.image || ""}</td>
                 <td>
-                  <div>
-                    <button>edit</button>
-                    <button>delete</button>
+                  <div className={styles.iconsWrapper}>
+                    <button
+                      className={`${styles.iconButton} ${styles.sendButton}`}
+                    >
+                      <span>
+                        <Icon name="send" />
+                      </span>
+                    </button>
+                    <button
+                      className={`${styles.iconButton} ${styles.deleteButton}`}
+                    >
+                      <span>
+                        <Icon name="delete" />
+                      </span>
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -66,6 +106,11 @@ export default function NotificationsList() {
           </tbody>
         </table>
       </div>
+      {isModalVisible && (
+        <AppModal onClose={closeModal}>
+          <Form onSubmit={handleFormSubmit} />
+        </AppModal>
+      )}
     </div>
   );
 }

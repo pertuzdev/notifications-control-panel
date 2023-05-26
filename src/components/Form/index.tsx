@@ -57,7 +57,7 @@ const Form = ({ onSubmit }: FormProps) => {
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.formTitleWrapper}>
-        <h2>Send Notification</h2>
+        <h2>Create Notification</h2>
       </div>
       <div className={styles.formGroup}>
         <input

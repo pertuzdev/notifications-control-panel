@@ -80,3 +80,29 @@
   color: #fff;
   cursor: pointer;
 }
+
+.iconsWrapper {
+  display: flex;
+  gap: 1rem;
+}
+
+.iconButton {
+  background-color: #fff;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.5s ease;
+}
+
+.deleteButton:hover {
+  background-color: hsl(0, 95%, 65%);
+}
+
+.sendButton:hover {
+  background-color: #3ea6ff;
+}

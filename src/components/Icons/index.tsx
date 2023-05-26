@@ -1,4 +1,6 @@
 import EditIcon from "./EditIcon";
+import ExitIcon from "./ExitIcon";
+import SendIcon from "./SendIcon";
 import TrashIcon from "./TrashIcon";
 import { CustomIconProps, IconParams, IconType } from "./types";
 
@@ -12,6 +14,10 @@ const iconSelector = (name: IconType, iconParams: CustomIconProps) => {
       return <EditIcon {...iconParams} />;
     case "delete":
       return <TrashIcon {...iconParams} />;
+    case "exit":
+      return <ExitIcon {...iconParams} />;
+    case "send":
+      return <SendIcon {...iconParams} />;
     default:
       return <EditIcon {...iconParams} />;
   }
