@@ -1,0 +1,38 @@
+.button {
+  padding: 0 1.5rem;
+  height: 50px;
+  background: #2962ff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  font-family: "Source Sans Pro", sans-serif;
+  box-shadow: 3px 10px 20px 0px rgba(35, 100, 210, 0.3);
+  color: #fff;
+  cursor: pointer;
+}
+
+.button.danger {
+  background: #ff5b29;
+}
+
+.button.cancel {
+  background: #fff;
+  color: #000;
+}
+
+.alertTextWrapper {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.alertTextWrapper p {
+  font-size: 1.5rem;
+}
+
+.alertButtonsWrapper {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  padding-bottom: 1rem;
+}

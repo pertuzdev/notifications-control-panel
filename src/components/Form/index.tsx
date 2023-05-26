@@ -2,19 +2,28 @@ import { useState } from "react";
 import styles from "./styles.module.css";
 import { addDoc, collection } from "@firebase/firestore";
 import { db } from "@/firebase/client";
+import Loader from "../Loader";
 
 interface FormProps {
-  onSubmit: (formData: FormData) => void;
+  onSubmit: (formData: NotificationData) => void;
+  onSave: (formData: NotificationData) => void;
+  isSaving?: boolean;
+  isSending?: boolean;
 }
 
-export interface FormData {
+export interface NotificationData {
   title: string;
   description: string;
   image: File | null;
 }
 
-const Form = ({ onSubmit }: FormProps) => {
-  const [formData, setFormData] = useState<FormData>({
+const Form = ({
+  onSubmit,
+  onSave,
+  isSaving = false,
+  isSending = false,
+}: FormProps) => {
+  const [formData, setFormData] = useState<NotificationData>({
     title: "",
     description: "",
     image: null,
@@ -38,15 +47,8 @@ const Form = ({ onSubmit }: FormProps) => {
     }));
   };
 
-  const handleSaveNotification = async () => {
-    try {
-      const docRef = await addDoc(collection(db, "notifications"), {
-        ...formData,
-      });
-      console.log("Document written with ID:", docRef.id);
-    } catch (e) {
-      console.log("Error adding document:", e);
-    }
+  const handleSave = () => {
+    onSave(formData);
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -95,19 +97,21 @@ const Form = ({ onSubmit }: FormProps) => {
           <span className={styles.uploadText}>Upload Image</span>
         </label>
       </div>
-      <button
-        type="button"
-        className={styles.textButton}
-        onClick={handleSaveNotification}
-      >
-        <span>Save as draft</span>
-      </button>
       <div className={styles.buttonsWrapper}>
-        <button type="button" className={styles.cardSecondaryButton}>
-          <span>Save</span>
+        <button
+          type="button"
+          className={styles.cardSecondaryButton}
+          onClick={handleSave}
+          disabled={!formData.title || !formData.description}
+        >
+          {isSaving ? <Loader /> : <span>Save</span>}
         </button>
-        <button type="submit" className={styles.cardSubmitButton}>
-          Send
+        <button
+          type="submit"
+          className={styles.cardSubmitButton}
+          disabled={!formData.title || !formData.description}
+        >
+          {isSending ? <Loader /> : <span>Send</span>}
         </button>
       </div>
     </form>

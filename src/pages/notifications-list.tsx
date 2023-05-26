@@ -1,17 +1,34 @@
-import Form, { FormData } from "@/components/Form";
+import Alert from "@/components/Alert";
+import Form, { NotificationData } from "@/components/Form";
 import Icon from "@/components/Icons";
+import Loader from "@/components/Loader";
 import AppModal from "@/components/Modal";
-import { db } from "@/firebase/client";
-import { INotifications } from "@/interfaces/Notifications";
+import { useNotifications } from "@/hooks/useNotifications";
+import { useSendNotifications } from "@/hooks/useSendNotifications";
 import styles from "@/styles/NotificationsList.module.css";
-import { collection, getDocs } from "@firebase/firestore";
-import axios from "axios";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function NotificationsList() {
-  const [notifications, setNotifications] = useState<INotifications[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [notificationToDeleteId, setNotificationToDeleteId] = useState("");
+  const [notificationToSend, setNotificationToSend] =
+    useState<NotificationData | null>(null);
+
+  const {
+    fetchNotifications,
+    isLoading: isNotificationsLoading,
+    notifications,
+    saveNotifications,
+    saveNotificationsLoading,
+    deleteNotification,
+    deleteNotificationLoading,
+  } = useNotifications();
+
+  const { isLoading: sendNotificationsLoading, sendNotification } =
+    useSendNotifications();
 
   const closeModal = () => {
     setIsModalVisible(false);
@@ -21,34 +38,81 @@ export default function NotificationsList() {
     setIsModalVisible(true);
   };
 
-  const fetchNotifications = async () => {
-    await getDocs(collection(db, "notifications")).then((querySnapshot) => {
-      const newData = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setNotifications(newData as INotifications[]);
-      console.log(notifications, newData);
+  const handleSubmit = (formData: NotificationData) => {
+    const { title, description } = formData;
+    sendNotification({
+      title,
+      description,
+      onSuccess: () => {
+        closeModal();
+        toast.success("Notification sent!!!");
+      },
+      onFail: () => {
+        closeModal();
+        toast.error("There was a problem. Try again!");
+      },
     });
   };
 
-  const handleFormSubmit = async (formData: FormData) => {
-    const { title, description } = formData;
-
-    try {
-      const response = await axios.post("/api/send-notification", {
+  const handleSendNotification = () => {
+    if (notificationToSend?.title && notificationToSend.description) {
+      const { title, description } = notificationToSend;
+      sendNotification({
         title,
         description,
+        onSuccess: () => {
+          setNotificationToSend(null);
+          toast.success("Notification sent!!!");
+        },
+        onFail: () => {
+          setNotificationToSend(null);
+          toast.error("There was a problem. Try again!");
+        },
       });
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
     }
   };
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  const handleSaveNotification = (formData: NotificationData) => {
+    saveNotifications({
+      formData,
+      onSuccess: () => {
+        fetchNotifications();
+        closeModal();
+        toast.success("Saved succesfully!!!");
+      },
+      onFail: () => {
+        closeModal();
+        toast.error("There was a problem. Try again!");
+      },
+    });
+  };
+
+  const handleDeleteNotification = () => {
+    deleteNotification({
+      notificationId: notificationToDeleteId,
+      onSuccess: () => {
+        fetchNotifications();
+        setNotificationToDeleteId("");
+        toast.success("Deleted succesfully!!!");
+      },
+      onFail: () => {
+        setNotificationToDeleteId("");
+        toast.error("There was a problem. Try again!");
+      },
+    });
+  };
+
+  if (isNotificationsLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.wrapper}>
+          <div className={styles.loaderWrapper}>
+            <Loader />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -87,6 +151,13 @@ export default function NotificationsList() {
                   <div className={styles.iconsWrapper}>
                     <button
                       className={`${styles.iconButton} ${styles.sendButton}`}
+                      onClick={() =>
+                        setNotificationToSend({
+                          title: notification.title,
+                          description: notification.description,
+                          image: notification.image,
+                        })
+                      }
                     >
                       <span>
                         <Icon name="send" />
@@ -94,6 +165,7 @@ export default function NotificationsList() {
                     </button>
                     <button
                       className={`${styles.iconButton} ${styles.deleteButton}`}
+                      onClick={() => setNotificationToDeleteId(notification.id)}
                     >
                       <span>
                         <Icon name="delete" />
@@ -108,9 +180,34 @@ export default function NotificationsList() {
       </div>
       {isModalVisible && (
         <AppModal onClose={closeModal}>
-          <Form onSubmit={handleFormSubmit} />
+          <Form
+            onSubmit={handleSubmit}
+            onSave={handleSaveNotification}
+            isSaving={saveNotificationsLoading}
+            isSending={sendNotificationsLoading}
+          />
         </AppModal>
       )}
+      {Boolean(notificationToDeleteId) && (
+        <Alert
+          title="Are you sure you want to delete this notification?"
+          description="This action is irreversible"
+          type="delete"
+          onCloseAlert={() => setNotificationToDeleteId("")}
+          primaryAction={handleDeleteNotification}
+          isLoading={deleteNotificationLoading}
+        />
+      )}
+      {Boolean(notificationToSend) && (
+        <Alert
+          title="Are you sure you want to send this notification?"
+          description="This action is irreversible"
+          onCloseAlert={() => setNotificationToSend(null)}
+          primaryAction={handleSendNotification}
+          isLoading={sendNotificationsLoading}
+        />
+      )}
+      <ToastContainer />
     </div>
   );
 }

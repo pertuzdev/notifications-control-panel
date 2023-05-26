@@ -97,6 +97,11 @@
   cursor: pointer;
 }
 
+.cardSubmitButton:disabled {
+  background: rgb(175, 175, 175);
+  cursor: default;
+}
+
 .cardSecondaryButton {
   display: flex;
   align-items: center;
@@ -111,10 +116,18 @@
   margin-right: 0.5rem;
 }
 
+.cardSecondaryButton:disabled {
+  cursor: default;
+}
+
 .cardSecondaryButton span {
   font-size: 1.3rem;
   font-weight: 600;
   color: #2962ff;
+}
+
+.cardSecondaryButton:disabled span {
+  color: rgb(175, 175, 175);
 }
 
 .uploadLabel {
