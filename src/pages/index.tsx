@@ -1,5 +1,5 @@
 import Alert from "@/components/Alert";
-import Form, { NotificationData } from "@/components/Form";
+import Form, { NotificationFormData } from "@/components/Form";
 import Icon from "@/components/Icons";
 import Loader from "@/components/Loader";
 import AppModal from "@/components/Modal";
@@ -15,7 +15,7 @@ export default function NotificationsList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [notificationToDeleteId, setNotificationToDeleteId] = useState("");
   const [notificationToSend, setNotificationToSend] =
-    useState<NotificationData | null>(null);
+    useState<NotificationFormData | null>(null);
 
   const {
     fetchNotifications,
@@ -38,41 +38,7 @@ export default function NotificationsList() {
     setIsModalVisible(true);
   };
 
-  const handleSubmit = (formData: NotificationData) => {
-    const { title, description } = formData;
-    sendNotification({
-      title,
-      description,
-      onSuccess: () => {
-        closeModal();
-        toast.success("Notification sent!!!");
-      },
-      onFail: () => {
-        closeModal();
-        toast.error("There was a problem. Try again!");
-      },
-    });
-  };
-
-  const handleSendNotification = () => {
-    if (notificationToSend?.title && notificationToSend.description) {
-      const { title, description } = notificationToSend;
-      sendNotification({
-        title,
-        description,
-        onSuccess: () => {
-          setNotificationToSend(null);
-          toast.success("Notification sent!!!");
-        },
-        onFail: () => {
-          setNotificationToSend(null);
-          toast.error("There was a problem. Try again!");
-        },
-      });
-    }
-  };
-
-  const handleSaveNotification = (formData: NotificationData) => {
+  const handleSaveNotification = (formData: NotificationFormData) => {
     saveNotifications({
       formData,
       onSuccess: () => {
@@ -100,6 +66,48 @@ export default function NotificationsList() {
         toast.error("There was a problem. Try again!");
       },
     });
+  };
+
+  const handleSubmit = (formData: NotificationFormData) => {
+    const { title, description, image } = formData;
+    sendNotification({
+      title,
+      description,
+      image,
+      onSuccess: () => {
+        saveNotifications({
+          formData: { title, description, image },
+          onSuccess: () => {
+            fetchNotifications();
+          },
+        });
+        closeModal();
+        toast.success("Notification sent!!!");
+      },
+      onFail: () => {
+        closeModal();
+        toast.error("There was a problem. Try again!");
+      },
+    });
+  };
+
+  const handleSendNotification = () => {
+    if (notificationToSend?.title && notificationToSend.description) {
+      const { title, description, image } = notificationToSend;
+      sendNotification({
+        title,
+        description,
+        image,
+        onSuccess: () => {
+          setNotificationToSend(null);
+          toast.success("Notification sent!!!");
+        },
+        onFail: () => {
+          setNotificationToSend(null);
+          toast.error("There was a problem. Try again!");
+        },
+      });
+    }
   };
 
   if (isNotificationsLoading) {

@@ -4,6 +4,7 @@ import { useState } from "react";
 type SendNotificationsParams = {
   title: string;
   description: string;
+  image: File | null;
   onSuccess?: () => void;
   onFail?: () => void;
 };

@@ -1,4 +1,4 @@
-import { NotificationData } from "@/components/Form";
+import { NotificationFormData } from "@/components/Form";
 import { db } from "@/firebase/client";
 import { INotifications } from "@/interfaces/Notifications";
 import {
@@ -11,15 +11,15 @@ import {
 import { useEffect, useState } from "react";
 
 type SaveNotificationsParams = {
-  formData: NotificationData;
-  onSuccess: () => void;
-  onFail: () => void;
+  formData: NotificationFormData;
+  onSuccess?: () => void;
+  onFail?: () => void;
 };
 
 type DeleteNotificationParams = {
   notificationId: string;
-  onSuccess: () => void;
-  onFail: () => void;
+  onSuccess?: () => void;
+  onFail?: () => void;
 };
 
 export const useNotifications = () => {
@@ -57,11 +57,11 @@ export const useNotifications = () => {
       });
       console.log("Document written with ID:", docRef.id);
       setNotificationsLoading(false);
-      onSuccess();
+      onSuccess && onSuccess();
     } catch (e) {
       console.log("Error adding document:", e);
       setNotificationsLoading(false);
-      onFail();
+      onFail && onFail();
     }
   };
 
@@ -75,11 +75,11 @@ export const useNotifications = () => {
       await deleteDoc(doc(db, "notifications", notificationId));
       console.log("Document deleted successfully");
       setDeleteNotificationLoading(false);
-      onSuccess();
+      onSuccess && onSuccess();
     } catch (e) {
       console.log("Error deleting document:", e);
       setDeleteNotificationLoading(false);
-      onFail();
+      onFail && onFail();
     }
   };
 

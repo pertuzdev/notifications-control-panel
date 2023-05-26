@@ -5,13 +5,13 @@ import { db } from "@/firebase/client";
 import Loader from "../Loader";
 
 interface FormProps {
-  onSubmit: (formData: NotificationData) => void;
-  onSave: (formData: NotificationData) => void;
+  onSubmit: (formData: NotificationFormData) => void;
+  onSave: (formData: NotificationFormData) => void;
   isSaving?: boolean;
   isSending?: boolean;
 }
 
-export interface NotificationData {
+export interface NotificationFormData {
   title: string;
   description: string;
   image: File | null;
@@ -23,7 +23,7 @@ const Form = ({
   isSaving = false,
   isSending = false,
 }: FormProps) => {
-  const [formData, setFormData] = useState<NotificationData>({
+  const [formData, setFormData] = useState<NotificationFormData>({
     title: "",
     description: "",
     image: null,
