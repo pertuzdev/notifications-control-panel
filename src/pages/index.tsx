@@ -142,6 +142,8 @@ export default function NotificationsList() {
     );
   }
 
+  console.log("notifications", notifications);
+
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
@@ -160,6 +162,7 @@ export default function NotificationsList() {
               <th>Title</th>
               <th>Description</th>
               <th>Image</th>
+              <th>Created date</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -179,6 +182,7 @@ export default function NotificationsList() {
                     </div>
                   )}
                 </td>
+                <td>{notification.createdAt}</td>
                 <td>
                   <div className={styles.iconsWrapper}>
                     <button

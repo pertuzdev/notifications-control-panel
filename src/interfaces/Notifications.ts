@@ -3,4 +3,5 @@ export interface INotifications {
   title: string;
   description: string;
   imageURL: string;
+  createdAt: string;
 }

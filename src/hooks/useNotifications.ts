@@ -56,15 +56,28 @@ export const useNotifications = () => {
 
     await getDocs(q)
       .then((querySnapshot) => {
-        const newData = querySnapshot.docs.map((doc) => {
-          console.log("doc", doc.metadata);
+        const newData = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        const formattedData = newData.map((data) => {
+          console.log("data", data);
+          const createdAt = (data as any).createdAt.toDate();
+          const formattedDate = createdAt.toLocaleString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+          });
 
           return {
-            ...doc.data(),
-            id: doc.id,
+            ...data,
+            createdAt: formattedDate,
           };
         });
-        setNotifications(newData as INotifications[]);
+        setNotifications(formattedData as INotifications[]);
         console.log(notifications, newData);
       })
       .finally(() => {
