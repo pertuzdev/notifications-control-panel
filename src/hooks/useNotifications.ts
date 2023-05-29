@@ -62,7 +62,6 @@ export const useNotifications = () => {
         }));
 
         const formattedData = newData.map((data) => {
-          console.log("data", data);
           const createdAt = (data as any).createdAt.toDate();
           const formattedDate = createdAt.toLocaleString("en-US", {
             year: "numeric",
@@ -78,7 +77,6 @@ export const useNotifications = () => {
           };
         });
         setNotifications(formattedData as INotifications[]);
-        console.log(notifications, newData);
       })
       .finally(() => {
         setIsLoading(false);
