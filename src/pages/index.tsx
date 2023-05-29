@@ -147,11 +147,6 @@ export default function NotificationsList() {
       <div className={styles.wrapper}>
         <div className={styles.titleWrapper}>
           <h1 className={styles.title}>Iglesia Ever App</h1>
-          <span className="navLinkWrapper">
-            <Link className="navLink" href="/">
-              Create Notification
-            </Link>
-          </span>
         </div>
         <div className={styles.createButtonWrapper}>
           <button className={styles.button} onClick={openModal}>

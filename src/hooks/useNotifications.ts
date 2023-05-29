@@ -7,6 +7,9 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
 } from "firebase/firestore";
 import {
   deleteObject,
@@ -45,12 +48,22 @@ export const useNotifications = () => {
 
   const fetchNotifications = async () => {
     setIsLoading(true);
-    await getDocs(collection(db, "notifications"))
+
+    const q = query(
+      collection(db, "notifications"),
+      orderBy("createdAt", "desc")
+    );
+
+    await getDocs(q)
       .then((querySnapshot) => {
-        const newData = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
+        const newData = querySnapshot.docs.map((doc) => {
+          console.log("doc", doc.metadata);
+
+          return {
+            ...doc.data(),
+            id: doc.id,
+          };
+        });
         setNotifications(newData as INotifications[]);
         console.log(notifications, newData);
       })
@@ -68,6 +81,7 @@ export const useNotifications = () => {
     try {
       const docRef = await addDoc(collection(db, "notifications"), {
         ...notificationData,
+        createdAt: serverTimestamp(),
       });
       console.log("Document written with ID:", docRef.id);
       setNotificationsLoading(false);
