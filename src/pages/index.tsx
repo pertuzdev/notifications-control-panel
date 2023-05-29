@@ -11,11 +11,17 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+interface NotificationToSendState {
+  title: string;
+  description: string;
+  imageURL: string;
+}
+
 export default function NotificationsList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [notificationToDeleteId, setNotificationToDeleteId] = useState("");
   const [notificationToSend, setNotificationToSend] =
-    useState<NotificationFormData | null>(null);
+    useState<NotificationToSendState | null>(null);
 
   const {
     fetchNotifications,
@@ -39,8 +45,13 @@ export default function NotificationsList() {
   };
 
   const handleSaveNotification = (formData: NotificationFormData) => {
+    const { title, description, imageURL } = formData;
     saveNotifications({
-      formData,
+      notificationData: {
+        title,
+        description,
+        imageURL,
+      },
       onSuccess: () => {
         fetchNotifications();
         closeModal();
@@ -69,14 +80,14 @@ export default function NotificationsList() {
   };
 
   const handleSubmit = (formData: NotificationFormData) => {
-    const { title, description, image } = formData;
+    const { title, description, imageURL } = formData;
     sendNotification({
       title,
       description,
-      image,
+      imageURL,
       onSuccess: () => {
         saveNotifications({
-          formData: { title, description, image },
+          notificationData: { title, description, imageURL },
           onSuccess: () => {
             fetchNotifications();
           },
@@ -93,11 +104,11 @@ export default function NotificationsList() {
 
   const handleSendNotification = () => {
     if (notificationToSend?.title && notificationToSend.description) {
-      const { title, description, image } = notificationToSend;
+      const { title, description, imageURL } = notificationToSend;
       sendNotification({
         title,
         description,
-        image,
+        imageURL,
         onSuccess: () => {
           setNotificationToSend(null);
           toast.success("Notification sent!!!");
@@ -154,7 +165,7 @@ export default function NotificationsList() {
                 <td>{index + 1}</td>
                 <td>{notification.title}</td>
                 <td>{notification.description}</td>
-                <td>{notification.image || ""}</td>
+                <td>{notification.imageURL || ""}</td>
                 <td>
                   <div className={styles.iconsWrapper}>
                     <button
@@ -163,7 +174,7 @@ export default function NotificationsList() {
                         setNotificationToSend({
                           title: notification.title,
                           description: notification.description,
-                          image: notification.image,
+                          imageURL: notification.imageURL,
                         })
                       }
                     >

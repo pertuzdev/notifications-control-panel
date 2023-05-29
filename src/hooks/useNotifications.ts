@@ -10,8 +10,14 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
+interface ICloudNotification {
+  title: string;
+  description: string;
+  imageURL: string;
+}
+
 type SaveNotificationsParams = {
-  formData: NotificationFormData;
+  notificationData: ICloudNotification;
   onSuccess?: () => void;
   onFail?: () => void;
 };
@@ -46,14 +52,14 @@ export const useNotifications = () => {
   };
 
   const saveNotifications = async ({
-    formData,
+    notificationData,
     onFail,
     onSuccess,
   }: SaveNotificationsParams) => {
     setNotificationsLoading(true);
     try {
       const docRef = await addDoc(collection(db, "notifications"), {
-        ...formData,
+        ...notificationData,
       });
       console.log("Document written with ID:", docRef.id);
       setNotificationsLoading(false);

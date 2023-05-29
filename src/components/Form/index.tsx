@@ -1,8 +1,15 @@
 import { useState } from "react";
 import styles from "./styles.module.css";
 import { addDoc, collection } from "@firebase/firestore";
-import { db } from "@/firebase/client";
+import { db, storage } from "@/firebase/client";
 import Loader from "../Loader";
+import Icon from "../Icons";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
 
 interface FormProps {
   onSubmit: (formData: NotificationFormData) => void;
@@ -14,7 +21,8 @@ interface FormProps {
 export interface NotificationFormData {
   title: string;
   description: string;
-  image: File | null;
+  imageFile?: File | null;
+  imageURL: string;
 }
 
 const Form = ({
@@ -26,8 +34,12 @@ const Form = ({
   const [formData, setFormData] = useState<NotificationFormData>({
     title: "",
     description: "",
-    image: null,
+    imageFile: null,
+    imageURL: "",
   });
+  const [previewImage, setPreviewImage] = useState<
+    string | ArrayBuffer | null | undefined
+  >(null);
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -41,9 +53,25 @@ const Form = ({
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (readerEvent) => {
+        setPreviewImage(readerEvent.target?.result);
+      };
+      setFormData((prevData) => ({
+        ...prevData,
+        imageFile: file,
+      }));
+    }
+  };
+
+  const handleClosePreviewImage = () => {
+    setPreviewImage(null);
     setFormData((prevData) => ({
       ...prevData,
-      image: file,
+      imageFile: null,
     }));
   };
 
@@ -51,9 +79,19 @@ const Form = ({
     onSave(formData);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    onSubmit(formData);
+
+    if (formData.imageFile) {
+      const storageRef = ref(storage, `images/${formData.imageFile.name}`);
+      const uploadTask = await uploadBytes(storageRef, formData.imageFile);
+
+      getDownloadURL(uploadTask.ref).then((downloadURL) => {
+        onSubmit({ ...formData, imageURL: downloadURL });
+      });
+    } else {
+      onSubmit(formData);
+    }
   };
 
   return (
@@ -84,7 +122,7 @@ const Form = ({
           placeholder="Message"
         />
       </div>
-      <div className={styles.formGroup}>
+      <div className={`${styles.formGroup} ${styles.formImageGroup}`}>
         <label htmlFor="image" className={styles.uploadLabel}>
           <input
             type="file"
@@ -96,6 +134,17 @@ const Form = ({
           />
           <span className={styles.uploadText}>Upload Image</span>
         </label>
+        {formData.imageFile && (
+          <div className={styles.previewImageWrapper}>
+            <button
+              className={styles.iconWrapper}
+              onClick={handleClosePreviewImage}
+            >
+              <Icon name="exit" width={30} height={30} />
+            </button>
+            <img src={previewImage as string} className={styles.previewImage} />
+          </div>
+        )}
       </div>
       <div className={styles.buttonsWrapper}>
         <button

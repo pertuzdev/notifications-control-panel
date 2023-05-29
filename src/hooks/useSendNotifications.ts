@@ -4,7 +4,7 @@ import { useState } from "react";
 type SendNotificationsParams = {
   title: string;
   description: string;
-  image: File | null;
+  imageURL: string;
   onSuccess?: () => void;
   onFail?: () => void;
 };
@@ -15,6 +15,7 @@ export const useSendNotifications = () => {
   const sendNotification = async ({
     title,
     description,
+    imageURL,
     onSuccess,
     onFail,
   }: SendNotificationsParams) => {
@@ -23,6 +24,7 @@ export const useSendNotifications = () => {
       const response = await axios.post("/api/send-notification", {
         title,
         description,
+        imageURL,
       });
       console.log(response.data);
       setIsLoading(false);

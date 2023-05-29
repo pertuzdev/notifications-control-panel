@@ -6,14 +6,15 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { title, message } = req.body;
+    const { title, description, imageURL } = req.body;
 
     try {
       // Send the notification using Firebase Admin SDK
       const payload = {
         notification: {
           title,
-          body: message,
+          body: description,
+          image: imageURL,
         },
         topic: "allDevices-1501",
       };
