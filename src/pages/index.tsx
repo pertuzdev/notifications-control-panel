@@ -5,8 +5,7 @@ import Loader from "@/components/Loader";
 import AppModal from "@/components/Modal";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useSendNotifications } from "@/hooks/useSendNotifications";
-import styles from "@/styles/NotificationsList.module.css";
-import Link from "next/link";
+import styles from "@/styles/Home.module.css";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -132,7 +131,7 @@ export default function NotificationsList() {
 
   if (isNotificationsLoading) {
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${styles.LoaderPageContainer}`}>
         <div className={styles.wrapper}>
           <div className={styles.loaderWrapper}>
             <Loader />
@@ -141,8 +140,6 @@ export default function NotificationsList() {
       </div>
     );
   }
-
-  console.log("notifications", notifications);
 
   return (
     <div className={styles.container}>
