@@ -17,9 +17,15 @@ interface NotificationToSendState {
   imageURL: string;
 }
 
+interface NotificationToDeleteState {
+  id: string;
+  imageURL: string;
+}
+
 export default function NotificationsList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [notificationToDeleteId, setNotificationToDeleteId] = useState("");
+  const [notificationToDelete, setNotificationToDelete] =
+    useState<NotificationToDeleteState | null>(null);
   const [notificationToSend, setNotificationToSend] =
     useState<NotificationToSendState | null>(null);
 
@@ -65,18 +71,21 @@ export default function NotificationsList() {
   };
 
   const handleDeleteNotification = () => {
-    deleteNotification({
-      notificationId: notificationToDeleteId,
-      onSuccess: () => {
-        fetchNotifications();
-        setNotificationToDeleteId("");
-        toast.success("Deleted succesfully!!!");
-      },
-      onFail: () => {
-        setNotificationToDeleteId("");
-        toast.error("There was a problem. Try again!");
-      },
-    });
+    if (notificationToDelete) {
+      deleteNotification({
+        notificationId: notificationToDelete?.id,
+        imageURL: notificationToDelete?.imageURL,
+        onSuccess: () => {
+          fetchNotifications();
+          setNotificationToDelete(null);
+          toast.success("Deleted succesfully!!!");
+        },
+        onFail: () => {
+          setNotificationToDelete(null);
+          toast.error("There was a problem. Try again!");
+        },
+      });
+    }
   };
 
   const handleSubmit = (formData: NotificationFormData) => {
@@ -165,7 +174,16 @@ export default function NotificationsList() {
                 <td>{index + 1}</td>
                 <td>{notification.title}</td>
                 <td>{notification.description}</td>
-                <td>{notification.imageURL || ""}</td>
+                <td>
+                  {notification.imageURL && (
+                    <div className={styles.imageWrapper}>
+                      <img
+                        src={notification.imageURL}
+                        className={styles.image}
+                      />
+                    </div>
+                  )}
+                </td>
                 <td>
                   <div className={styles.iconsWrapper}>
                     <button
@@ -184,7 +202,12 @@ export default function NotificationsList() {
                     </button>
                     <button
                       className={`${styles.iconButton} ${styles.deleteButton}`}
-                      onClick={() => setNotificationToDeleteId(notification.id)}
+                      onClick={() =>
+                        setNotificationToDelete({
+                          id: notification.id,
+                          imageURL: notification.imageURL,
+                        })
+                      }
                     >
                       <span>
                         <Icon name="delete" />
@@ -207,12 +230,12 @@ export default function NotificationsList() {
           />
         </AppModal>
       )}
-      {Boolean(notificationToDeleteId) && (
+      {Boolean(notificationToDelete) && (
         <Alert
           title="Are you sure you want to delete this notification?"
           description="This action is irreversible"
           type="delete"
-          onCloseAlert={() => setNotificationToDeleteId("")}
+          onCloseAlert={() => setNotificationToDelete(null)}
           primaryAction={handleDeleteNotification}
           isLoading={deleteNotificationLoading}
         />

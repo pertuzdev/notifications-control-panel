@@ -1,5 +1,5 @@
 import { NotificationFormData } from "@/components/Form";
-import { db } from "@/firebase/client";
+import { db, storage } from "@/firebase/client";
 import { INotifications } from "@/interfaces/Notifications";
 import {
   addDoc,
@@ -8,6 +8,13 @@ import {
   doc,
   getDocs,
 } from "firebase/firestore";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { useEffect, useState } from "react";
 
 interface ICloudNotification {
@@ -24,6 +31,7 @@ type SaveNotificationsParams = {
 
 type DeleteNotificationParams = {
   notificationId: string;
+  imageURL: string;
   onSuccess?: () => void;
   onFail?: () => void;
 };
@@ -73,10 +81,15 @@ export const useNotifications = () => {
 
   const deleteNotification = async ({
     notificationId,
+    imageURL,
     onFail,
     onSuccess,
   }: DeleteNotificationParams) => {
     setDeleteNotificationLoading(true);
+    if (imageURL) {
+      const imageRef = ref(storage, imageURL);
+      await deleteObject(imageRef);
+    }
     try {
       await deleteDoc(doc(db, "notifications", notificationId));
       console.log("Document deleted successfully");

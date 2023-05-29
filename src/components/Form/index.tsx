@@ -75,7 +75,18 @@ const Form = ({
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (formData.imageFile) {
+      const storageRef = ref(storage, `images/${formData.imageFile.name}`);
+      const uploadTask = await uploadBytes(storageRef, formData.imageFile);
+
+      getDownloadURL(uploadTask.ref).then((downloadURL) => {
+        onSave({ ...formData, imageURL: downloadURL });
+      });
+    } else {
+      onSave(formData);
+    }
+
     onSave(formData);
   };
 
